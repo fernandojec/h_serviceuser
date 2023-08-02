@@ -26,7 +26,7 @@ type App struct {
 }
 
 func LoadConfig() (cfg Config, err error) {
-	err = godotenv.Load("../../.env")
+	err = godotenv.Load(".env")
 	if err != nil {
 		return
 	}

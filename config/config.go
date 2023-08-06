@@ -11,6 +11,7 @@ type Config struct {
 	Postgres postgres
 	App      app
 	Jwt      jwt
+	Redis    redisConfig
 }
 
 type postgres struct {
@@ -30,6 +31,12 @@ type jwt struct {
 	ExpireAccessMinutes  int `env:"EXPIRE_ACCESS_MIN"`
 	ExpireRefreshMinutes int `env:"EXPIRE_REFRESH_MIN"`
 	AutoLogoffMinutes    int `env:"AUTO_LOGOFF_MIN"`
+}
+
+type redisConfig struct {
+	Host     string `env:"REDIS_HOST"`
+	Port     string `env:"REDIS_PORT"`
+	Password string `env:"REDIS_PASSWORD"`
 }
 
 func LoadConfig() (cfg Config, err error) {

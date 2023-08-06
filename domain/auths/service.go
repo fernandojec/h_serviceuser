@@ -12,11 +12,14 @@ import (
 
 	"github.com/fernandojec/h_serviceuser/config"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/sync/errgroup"
 )
 
 type irepo interface {
 	GetAuthByEmail(email string) (auth *auths, err error)
-	InsertRedis(c context.Context, key string, value interface{}, duration time.Duration)
+	InsertRedis(c context.Context, key string, value interface{}, duration time.Duration) (err error)
+	RemoveRedis(c context.Context, key string) (err error)
+	GetRedis(c context.Context, key string) (value interface{}, err error)
 }
 
 type authsService struct {
@@ -47,14 +50,17 @@ func (s *authsService) SignIn(ctx context.Context, data signInRequest) (dataResp
 		return
 	}
 
-	dataResponse = dataUser.ConvertToSignInResponse()
+	accessToken, refreshToken, exp, err := s.generateTokenPair(ctx, dataUser)
 
-	// dataResponse.Token
+	dataResponse = dataUser.ConvertToSignInResponse()
+	dataResponse.RefreshToken = refreshToken
+	dataResponse.AccessToken = accessToken
+	dataResponse.ExpiresIn = exp
 
 	return
 }
 
-func (s *authsService) GenerateTokenPair(ctx context.Context, auth *auths) (accessToken,
+func (s *authsService) generateTokenPair(ctx context.Context, auth *auths) (accessToken,
 	refreshToken string,
 	exp int64,
 	err error,
@@ -113,4 +119,65 @@ func (s *authsService) createToken(user *auths, expireMinutes int, secret string
 	token, err = jwtToken.SignedString([]byte(secret))
 
 	return
+}
+func (s *authsService) ParseToken(tokenString, secret string) (
+	claims *MyClaims,
+	err error,
+) {
+	token, err := jwt.ParseWithClaims(tokenString, &MyClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(secret), nil
+		})
+	if err != nil {
+		return
+	}
+
+	if claims, ok := token.Claims.(*MyClaims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, err
+}
+func (s *authsService) ValidateToken(c context.Context, claims *MyClaims, isRefresh bool) (
+
+	user auths,
+	err error,
+) {
+	var g errgroup.Group
+	g.Go(func() error {
+		cacheJSON, _ := s.irepo.GetRedis(c, fmt.Sprintf("%s-token-%s", "H8-", claims.ID))
+		cachedTokens := new(CachedTokens)
+		err = json.Unmarshal([]byte(cacheJSON.(string)), cachedTokens)
+
+		var tokenUID string
+		if isRefresh {
+			tokenUID = cachedTokens.RefreshUID
+		} else {
+			tokenUID = cachedTokens.AccessUID
+		}
+		if err != nil || tokenUID != claims.UUID {
+			return errors.New("token not found")
+		}
+
+		return nil
+	})
+	userChan := make([]auths, 1)
+	if isRefresh {
+		g.Go(func() error {
+			var userT auths
+			userTP, _ := s.irepo.GetAuthByEmail(claims.Email)
+			if userTP == nil {
+				return errors.New("user not found")
+			}
+			userT = *userTP
+			userChan[0] = userT
+			return nil
+		})
+	}
+	err = g.Wait()
+	user = userChan[0]
+	return user, err
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/fernandojec/h_serviceuser/domain/users"
 	customvalidator "github.com/fernandojec/h_serviceuser/pkg/customValidator"
 	"github.com/fernandojec/h_serviceuser/pkg/dbconnect"
+	"github.com/fernandojec/h_serviceuser/pkg/redisconnect"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -27,6 +28,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Cannot connect to DB:%v", err)
 	}
+	redisClient, err := redisconnect.ConnectRedis()
+	if err != nil {
+		log.Fatalf("Cannot connect to Redis:%v", err)
+	}
 	// _ = dbx
 	app := fiber.New(
 		fiber.Config{
@@ -37,7 +42,7 @@ func main() {
 	v1 := app.Group("v1")
 
 	users.RouterInit(v1, dbx)
-	auths.RouterInit(v1, dbx)
+	auths.RouterInit(v1, dbx, redisClient)
 
 	app.Listen(cfg.App.BasePort)
 }

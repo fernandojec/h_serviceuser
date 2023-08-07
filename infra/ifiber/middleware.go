@@ -1,1 +1,52 @@
 package ifiber
+
+import (
+	"fmt"
+	"strconv"
+	"time"
+
+	"github.com/fernandojec/h_serviceuser/config"
+	"github.com/fernandojec/h_serviceuser/domain/auths"
+	"github.com/gofiber/fiber/v2"
+	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
+)
+
+func ValidateJWT(dbx *sqlx.DB, redisc *redis.Client) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		token := c.Get("x-token")
+		if token == "" {
+			return ErrorResponse(c, fiber.StatusUnauthorized, fiber.Map{
+				"error":   "unauthenticated",
+				"message": "x-token is not provide",
+			})
+		}
+		repo := auths.NewAuthsRepo(dbx, redisc)
+		tokenService := auths.NewAuthsService(repo)
+		claims, err := tokenService.ParseToken(token, auths.ACCESS_SECRET)
+		if err != nil {
+			return ErrorResponse(c, fiber.StatusUnauthorized, fiber.Map{
+				"error":        "unauthenticated",
+				"message":      err.Error(),
+				"addt-message": "Error Parse Token",
+			})
+		}
+		// user, err := tokenService.ValidateToken(claims, false)
+		_, err = tokenService.ValidateToken(c.Context(), claims, false)
+		if err != nil {
+			return ErrorResponse(c, fiber.StatusUnauthorized, fiber.Map{
+				"error":        "unauthenticated",
+				"message":      err.Error(),
+				"addt-message": "Error Validate Token",
+			})
+		}
+
+		go func() {
+			redisc.Expire(c.Context(), fmt.Sprintf("%stoken-%s", "H8-", claims.ID),
+				time.Duration(60*config.AppConfig.Jwt.AutoLogoffMinutes))
+		}()
+		id, _ := strconv.ParseUint(claims.ID, 10, 64)
+		c.Locals("UserID", uint(id))
+		return c.Next()
+	}
+}

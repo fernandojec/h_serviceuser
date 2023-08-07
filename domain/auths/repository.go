@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/gofiber/fiber/v2/log"
+	"github.com/fernandojec/h_serviceuser/pkg/loghelper"
 	"github.com/jmoiron/sqlx"
 	"github.com/redis/go-redis/v9"
 )
@@ -18,7 +18,7 @@ func NewAuthsRepo(db *sqlx.DB, redis *redis.Client) *authsRepo {
 	return &authsRepo{db: db, redis: redis}
 }
 
-func (r *authsRepo) GetAuthByEmail(email string) (data *auths, err error) {
+func (r *authsRepo) GetAuthByEmail(ctx context.Context, email string) (data *auths, err error) {
 	qs := `select * from users where email=$1 and is_active = true`
 
 	_, err = r.db.Prepare(qs)
@@ -29,7 +29,7 @@ func (r *authsRepo) GetAuthByEmail(email string) (data *auths, err error) {
 	err = r.db.Get(data, qs, email)
 	if err != nil {
 		data = nil
-		log.Errorf("Error db:%v", err)
+		loghelper.Errorf(ctx, "Error Get Data From DB :%v", err)
 	}
 	return
 }

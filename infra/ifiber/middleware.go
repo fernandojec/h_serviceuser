@@ -41,7 +41,7 @@ func ValidateJWT(dbx *sqlx.DB, redisc *redis.Client) fiber.Handler {
 		}
 
 		go func() {
-			redisc.Expire(c.Context(), fmt.Sprintf("%stoken-%s", "H8-", claims.ID),
+			redisc.Expire(c.Context(), fmt.Sprintf("%s-token-%s", "H8", claims.ID),
 				time.Duration(60*config.AppConfig.Jwt.AutoLogoffMinutes))
 		}()
 		id, _ := strconv.ParseUint(claims.ID, 10, 64)

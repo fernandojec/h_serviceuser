@@ -47,7 +47,7 @@ func (s *Service) GenerateTokenPair(ctx context.Context, auth *AuthsJwt) (access
 	})
 	s.irepo.InsertRedis(
 		ctx,
-		fmt.Sprintf("%s-token-%s", "H8-", auth.UserID),
+		fmt.Sprintf("%s-token-%s", "H8", auth.UserID),
 		cacheJSON,
 		(time.Minute * time.Duration(config.AppConfig.Jwt.AutoLogoffMinutes)),
 	)
@@ -113,7 +113,7 @@ func (s *Service) ValidateToken(c context.Context, claims *MyClaims, isRefresh b
 ) {
 	var g errgroup.Group
 	g.Go(func() error {
-		cacheJSON, _ := s.irepo.GetRedis(c, fmt.Sprintf("%s-token-%s", "H8-", claims.ID))
+		cacheJSON, _ := s.irepo.GetRedis(c, fmt.Sprintf("%s-token-%s", "H8", claims.ID))
 		cachedTokens := new(CachedTokens)
 		err = json.Unmarshal([]byte(cacheJSON.(string)), cachedTokens)
 

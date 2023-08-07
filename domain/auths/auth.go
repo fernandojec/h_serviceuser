@@ -13,7 +13,7 @@ type auths struct {
 	Email      string    `db:"email"`
 	Password   string    `db:"password"`
 	IsActive   bool      `db:"is_active"`
-	UserCreate bool      `db:"user_create"`
+	UserCreate string    `db:"user_create"`
 	CreateAt   time.Time `db:"create_at"`
 }
 

@@ -2,6 +2,7 @@ package auths
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"time"
 
@@ -30,8 +31,11 @@ func NewAuthsService(irepo irepo, jwtService jwttokenparse.Service) *authsServic
 
 func (s *authsService) SignIn(ctx context.Context, data signInRequest) (dataResponse signInRequestResponse, err error) {
 	dataUser, err := s.irepo.GetAuthByEmail(data.Email)
-	if err != nil {
+	if err != nil && err == sql.ErrNoRows {
 		err = errors.New("user not found")
+		return
+	}
+	if err != nil {
 		return
 	}
 	if dataUser == nil {

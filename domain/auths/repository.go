@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/jmoiron/sqlx"
 	"github.com/redis/go-redis/v9"
 )
@@ -18,13 +19,16 @@ func NewAuthsRepo(db *sqlx.DB, redis *redis.Client) *authsRepo {
 }
 
 func (r *authsRepo) GetAuthByEmail(email string) (data *auths, err error) {
-	qs := `select * from users where email=$1`
+	qs := `select * from users where email=$1 and is_active = true`
 
 	_, err = r.db.Prepare(qs)
 	if err != nil {
 		return
 	}
 	err = r.db.Get(data, qs, email)
+	if err != nil {
+		log.Errorf("Error db:%v", err)
+	}
 	return
 }
 

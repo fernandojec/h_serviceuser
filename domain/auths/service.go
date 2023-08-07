@@ -35,6 +35,7 @@ func NewAuthsService(irepo irepo) *authsService {
 func (s *authsService) SignIn(ctx context.Context, data signInRequest) (dataResponse signInRequestResponse, err error) {
 	dataUser, err := s.irepo.GetAuthByEmail(data.Email)
 	if err != nil {
+		err = errors.New("user not found")
 		return
 	}
 	if dataUser == nil {

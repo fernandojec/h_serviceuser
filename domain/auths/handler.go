@@ -3,6 +3,7 @@ package auths
 import (
 	"context"
 
+	customvalidator "github.com/fernandojec/h_serviceuser/pkg/customValidator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -26,9 +27,10 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
-	errors := ValidateStructAuth(*u)
+	validate := customvalidator.NewCustomValidator()
+	errors := validate.Validate(u)
 	if errors != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(errors)
+		return errors
 	}
 
 	dataReponse, err := h.iservice.SignIn(c.Context(), *u)

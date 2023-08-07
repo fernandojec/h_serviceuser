@@ -3,8 +3,8 @@ package auths
 import "github.com/golang-jwt/jwt/v4"
 
 type signInRequest struct {
-	Email    string `json:"email,omitempty"`
-	Password string `json:"password"`
+	Email    string `json:"email,omitempty" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type signInRequestResponse struct {

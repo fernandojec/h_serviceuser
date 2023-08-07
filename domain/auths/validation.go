@@ -1,26 +1,26 @@
 package auths
 
-import "github.com/go-playground/validator/v10"
+import (
+	"fmt"
 
-type ErrorResponse struct {
-	FailedField string
-	Tag         string
-	Value       string
-}
+	"github.com/go-playground/validator/v10"
+)
 
 var validate = validator.New()
 
-func ValidateStructAuth(user interface{}) []ErrorResponse {
-	var errors []ErrorResponse
+func ValidateStructAuth(user interface{}) []string {
+	// var errors []ErrorResponse
 	err := validate.Struct(user)
+	errMsgs := make([]string, 0)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			var element ErrorResponse
-			element.FailedField = err.StructNamespace()
-			element.Tag = err.Tag()
-			element.Value = err.Param()
-			errors = append(errors, element)
+			errMsgs = append(errMsgs, fmt.Sprintf(
+				"[%s]: '%v' | Needs to implement '%s'",
+				err.Field(),
+				err.Param(),
+				err.Tag(),
+			))
 		}
 	}
-	return errors
+	return errMsgs
 }

@@ -14,6 +14,7 @@ import (
 
 func main() {
 	cfg, err := config.LoadConfig()
+	config.AppConfig = cfg
 	if err != nil {
 		panic("Cannot Load Config")
 	}

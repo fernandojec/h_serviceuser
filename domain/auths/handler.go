@@ -13,6 +13,7 @@ type AuthHandler struct {
 
 type iservice interface {
 	SignIn(ctx context.Context, data signInRequest) (dataResponse signInRequestResponse, err error)
+	SignOut(ctx context.Context, data signOutRequest) (err error)
 }
 
 func NewAuthHandler(iservice iservice) *AuthHandler {
@@ -43,4 +44,17 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 		"data":    dataReponse,
 		"message": "success",
 	})
+}
+
+func (h *AuthHandler) SignOut(c *fiber.Ctx) error {
+	tokenString := c.Get("x-token")
+	data := signOutRequest{
+		AccessToken: tokenString,
+	}
+	err := h.iservice.SignOut(c.Context(), data)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).SendString("User logged out")
 }

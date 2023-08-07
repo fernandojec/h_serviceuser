@@ -14,7 +14,7 @@ import (
 )
 
 type irepo interface {
-	GetAuthByEmail(email string) (data *AuthsJwt, err error)
+	GetAuthByEmail(ctx context.Context, email string) (data *AuthsJwt, err error)
 	GetRedis(c context.Context, key string) (value interface{}, err error)
 	InsertRedis(c context.Context, key string, value interface{}, duration time.Duration) (err error)
 }
@@ -133,7 +133,7 @@ func (s *Service) ValidateToken(c context.Context, claims *MyClaims, isRefresh b
 	if isRefresh {
 		g.Go(func() error {
 			var userT AuthsJwt
-			userTP, _ := s.irepo.GetAuthByEmail(claims.Email)
+			userTP, _ := s.irepo.GetAuthByEmail(c, claims.Email)
 			if userTP == nil {
 				return errors.New("user not found")
 			}

@@ -34,7 +34,7 @@ func (h *AuthHandler) SignIn(c *fiber.Ctx) error {
 		return errors
 	}
 
-	dataReponse, err := h.iservice.SignIn(c.Context(), *u)
+	dataReponse, err := h.iservice.SignIn(c.UserContext(), *u)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(map[string]interface{}{
 			"message": err.Error(),
@@ -51,7 +51,7 @@ func (h *AuthHandler) SignOut(c *fiber.Ctx) error {
 	data := signOutRequest{
 		AccessToken: tokenString,
 	}
-	err := h.iservice.SignOut(c.Context(), data)
+	err := h.iservice.SignOut(c.UserContext(), data)
 	if err != nil {
 		return err
 	}

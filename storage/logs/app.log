@@ -1,0 +1,19 @@
+2023-08-07T14:25:12.105+0700	INFO	api/main.go:21	simple zap logger example
+2023-08-07T14:58:26.056+0700	INFO	api/main.go:21	simple zap logger example
+2023-08-07T14:59:59.963+0700	INFO	api/main.go:26	simple zap logger exampleInita5433727-334b-4d26-be73-b86005cc3e79
+2023-08-07T15:10:32.860+0700	INFO	api/main.go:26	Init58c0236f-9b81-4470-bc8c-954b6b95c9a5simple zap logger example
+2023-08-07T15:13:26.423+0700	INFO	api/main.go:26	Initb7d74d01-9311-42f4-916a-891179c390c8simple zap logger example
+main.main
+	C:/Users/USER/source/Workspaces/Learn/Hacktive8/GO/tugas_akhir/h_service_user/cmd/api/main.go:26
+runtime.main
+	C:/Program Files/Go/src/runtime/proc.go:250
+2023-08-07T15:19:53.862+0700	INFO	api/main.go:26	Init9aa962b1-a303-4de8-a8a1-039150734f7fsimple zap logger example
+2023-08-07T15:19:53.872+0700	INFO	api/main.go:26	Init9aa962b1-a303-4de8-a8a1-039150734f7f%!(EXTRA string=simple zap logger example)
+2023-08-07T15:26:16.687+0700	INFO	api/main.go:26	Init272e4146-7185-4625-a92a-8f2d6f43caa4simple zap logger example
+{"level":"INFO","ts":"2023-08-07T15:36:37.604+0700","caller":"api/main.go:26","msg":"Init1197c98a-5875-4cd6-b45a-c0f74ce61eb3simple zap logger example"}
+{"level":"INFO","ts":"2023-08-07T15:40:12.009+0700","caller":"api/main.go:26","msg":"Init7299b3af-7883-4059-bb56-e0f1fade983fsimple zap logger example"}
+{"level":"INFO","ts":"2023-08-07T15:54:12.556+0700","caller":"api/main.go:26","msg":"Initbb888545-97a7-46ee-850f-e6ac09084419simple zap logger example"}
+{"level":"INFO","ts":"2023-08-07T16:05:04.371+0700","caller":"api/main.go:26","msg":"simple zap logger example data api%!v(MISSING)"}
+{"level":"INFO","ts":"2023-08-07T16:05:43.958+0700","caller":"api/main.go:26","msg":"data apisimple zap logger example %!v(MISSING)"}
+{"level":"INFO","ts":"2023-08-07T16:06:26.573+0700","caller":"api/main.go:26","msg":"Init5e9aa56a-5d5c-4e60-9c1a-867e8c2d520a simple zap logger example data api"}
+{"level":"INFO","ts":"2023-08-07T16:14:49.820+0700","pemanggilkey":"api/main.go:26","pesankey":"Init5d0d44d4-9dd0-4bfc-a86a-1fe0f8337e50 simple zap logger example data api"}

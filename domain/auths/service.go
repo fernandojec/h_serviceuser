@@ -11,7 +11,7 @@ import (
 )
 
 type irepo interface {
-	GetAuthByEmail(email string) (auth *auths, err error)
+	GetAuthByEmail(ctx context.Context, email string) (auth *auths, err error)
 	InsertRedis(c context.Context, key string, value interface{}, duration time.Duration) (err error)
 	RemoveRedis(c context.Context, key string) (err error)
 	GetRedis(c context.Context, key string) (value interface{}, err error)
@@ -30,7 +30,8 @@ func NewAuthsService(irepo irepo, jwtService jwttokenparse.Service) *authsServic
 }
 
 func (s *authsService) SignIn(ctx context.Context, data signInRequest) (dataResponse signInRequestResponse, err error) {
-	dataUser, err := s.irepo.GetAuthByEmail(data.Email)
+
+	dataUser, err := s.irepo.GetAuthByEmail(ctx, data.Email)
 	if err != nil && err == sql.ErrNoRows {
 		err = errors.New("user not found")
 		return
@@ -64,7 +65,6 @@ func (s *authsService) SignIn(ctx context.Context, data signInRequest) (dataResp
 }
 
 func (s *authsService) SignOut(ctx context.Context, data signOutRequest) (err error) {
-
 	claims, err := s.jwtService.ParseToken(data.AccessToken, jwttokenparse.ACCESS_SECRET)
 	if err != nil {
 		return err

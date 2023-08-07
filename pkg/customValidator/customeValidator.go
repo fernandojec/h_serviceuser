@@ -48,6 +48,7 @@ func HttpErrorHandler(c *fiber.Ctx, err error) error {
 		}
 		// report.Message = message
 		reportMessage = message
+		report.Code = fiber.ErrBadRequest.Code
 	}
 
 	// c.Logger().Error(report)

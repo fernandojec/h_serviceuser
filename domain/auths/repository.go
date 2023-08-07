@@ -25,8 +25,10 @@ func (r *authsRepo) GetAuthByEmail(email string) (data *auths, err error) {
 	if err != nil {
 		return
 	}
+	data = &auths{}
 	err = r.db.Get(data, qs, email)
 	if err != nil {
+		data = nil
 		log.Errorf("Error db:%v", err)
 	}
 	return

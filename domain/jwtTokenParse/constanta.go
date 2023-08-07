@@ -1,4 +1,4 @@
-package auths
+package jwttokenparse
 
 import "github.com/golang-jwt/jwt/v4"
 

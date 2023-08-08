@@ -12,6 +12,10 @@ type CustomValidator struct {
 	Validator *validator.Validate
 }
 
+func NewCustomValidator() *CustomValidator {
+	return &CustomValidator{Validator: validator.New()}
+}
+
 func (cv *CustomValidator) Validate(i interface{}) error {
 	return cv.Validator.Struct(i)
 }
@@ -44,6 +48,7 @@ func HttpErrorHandler(c *fiber.Ctx, err error) error {
 		}
 		// report.Message = message
 		reportMessage = message
+		report.Code = fiber.ErrBadRequest.Code
 	}
 
 	// c.Logger().Error(report)

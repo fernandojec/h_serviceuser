@@ -8,11 +8,13 @@ import (
 var AppConfig Config
 
 type Config struct {
-	Postgres Postgres
-	App      App
+	Postgres postgres
+	App      app
+	Jwt      jwt
+	Redis    redisConfig
 }
 
-type Postgres struct {
+type postgres struct {
 	Host     string `env:"POSTGRES_HOST"`
 	Port     string `env:"POSTGRES_PORT"`
 	DbName   string `env:"POSTGRES_DBNAME"`
@@ -20,9 +22,21 @@ type Postgres struct {
 	Password string `env:"POSTGRES_PASSWORD"`
 	SSLMode  string `env:"POSTGRES_SSLMODE"`
 }
-type App struct {
+type app struct {
 	BaseUrl  string `env:"BASE_URL"`
 	BasePort string `env:"BASE_PORT"`
+}
+
+type jwt struct {
+	ExpireAccessMinutes  int `env:"EXPIRE_ACCESS_MIN"`
+	ExpireRefreshMinutes int `env:"EXPIRE_REFRESH_MIN"`
+	AutoLogoffMinutes    int `env:"AUTO_LOGOFF_MIN"`
+}
+
+type redisConfig struct {
+	Host     string `env:"REDIS_HOST"`
+	Port     string `env:"REDIS_PORT"`
+	Password string `env:"REDIS_PASSWORD"`
 }
 
 func LoadConfig() (cfg Config, err error) {

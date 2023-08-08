@@ -57,7 +57,8 @@ func main() {
 	app.Use(cors.New())
 	v1 := app.Group("v1")
 	v1.Use(ifiber.InsertContext())
-	users.RouterInit(v1, dbx)
+
+	users.RouterInitUsers(v1, dbx)
 	auths.RouterInit(v1, dbx, redisClient)
 	paramedics.RouterInit(v1, dbx, redisClient)
 	patient.RouterInit(v1, dbx, redisClient)

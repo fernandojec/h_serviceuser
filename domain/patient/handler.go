@@ -26,6 +26,18 @@ func (h *handler) Add(c *fiber.Ctx) error {
 	return ifiber.SuccessResponse(c, fiber.StatusCreated, nil)
 }
 
+func (h *handler) Find(c *fiber.Ctx) error {
+	u := new(PatientFilterProto)
+	if err := c.BodyParser(u); err != nil {
+		return err
+	}
+	data_result, err := h.ipatientgrpc.Find(c.UserContext(), u)
+	if err != nil {
+		return err
+	}
+	return ifiber.SuccessResponse(c, fiber.StatusOK, data_result)
+}
+
 func (h *handler) List(c *fiber.Ctx) error {
 	data_result, err := h.ipatientgrpc.List(c.UserContext(), nil, nil)
 	if err != nil {

@@ -25,6 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type PatientProtoServiceClient interface {
 	Create(ctx context.Context, in *PatientProto, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PatientListProto, error)
+	Find(ctx context.Context, in *PatientFilterProto, opts ...grpc.CallOption) (*PatientListProto, error)
 }
 
 type patientProtoServiceClient struct {
@@ -53,12 +54,22 @@ func (c *patientProtoServiceClient) List(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
+func (c *patientProtoServiceClient) Find(ctx context.Context, in *PatientFilterProto, opts ...grpc.CallOption) (*PatientListProto, error) {
+	out := new(PatientListProto)
+	err := c.cc.Invoke(ctx, "/patient.PatientProtoService/Find", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PatientProtoServiceServer is the server API for PatientProtoService service.
 // All implementations must embed UnimplementedPatientProtoServiceServer
 // for forward compatibility
 type PatientProtoServiceServer interface {
 	Create(context.Context, *PatientProto) (*emptypb.Empty, error)
 	List(context.Context, *emptypb.Empty) (*PatientListProto, error)
+	Find(context.Context, *PatientFilterProto) (*PatientListProto, error)
 	mustEmbedUnimplementedPatientProtoServiceServer()
 }
 
@@ -71,6 +82,9 @@ func (UnimplementedPatientProtoServiceServer) Create(context.Context, *PatientPr
 }
 func (UnimplementedPatientProtoServiceServer) List(context.Context, *emptypb.Empty) (*PatientListProto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedPatientProtoServiceServer) Find(context.Context, *PatientFilterProto) (*PatientListProto, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Find not implemented")
 }
 func (UnimplementedPatientProtoServiceServer) mustEmbedUnimplementedPatientProtoServiceServer() {}
 
@@ -121,6 +135,24 @@ func _PatientProtoService_List_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PatientProtoService_Find_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatientFilterProto)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PatientProtoServiceServer).Find(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/patient.PatientProtoService/Find",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PatientProtoServiceServer).Find(ctx, req.(*PatientFilterProto))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PatientProtoService_ServiceDesc is the grpc.ServiceDesc for PatientProtoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -135,6 +167,10 @@ var PatientProtoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _PatientProtoService_List_Handler,
+		},
+		{
+			MethodName: "Find",
+			Handler:    _PatientProtoService_Find_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

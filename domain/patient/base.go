@@ -32,4 +32,5 @@ func RouterInit(c fiber.Router, dbx *sqlx.DB, redisc *redis.Client) {
 	route.Use(ifiber.ValidateJWT(dbx, redisc))
 	route.Post("/", handler.Add)
 	route.Get("/", handler.List)
+	route.Get("/Find", handler.Find)
 }

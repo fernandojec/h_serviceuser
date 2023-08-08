@@ -6,6 +6,7 @@ import (
 
 	"github.com/fernandojec/h_serviceuser/config"
 	"github.com/fernandojec/h_serviceuser/domain/auths"
+	"github.com/fernandojec/h_serviceuser/domain/paramedics"
 	"github.com/fernandojec/h_serviceuser/domain/users"
 	"github.com/fernandojec/h_serviceuser/infra/ifiber"
 	customvalidator "github.com/fernandojec/h_serviceuser/pkg/customValidator"
@@ -55,6 +56,6 @@ func main() {
 	v1.Use(ifiber.InsertContext())
 	users.RouterInit(v1, dbx)
 	auths.RouterInit(v1, dbx, redisClient)
-
+	paramedics.RouterInit(v1, dbx, redisClient)
 	app.Listen(cfg.App.BasePort)
 }

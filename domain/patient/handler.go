@@ -18,6 +18,7 @@ func (h *handler) Add(c *fiber.Ctx) error {
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
+	u.UserCreate = c.UserContext().Value(ifiber.USERID).(string)
 	_, err := h.ipatientgrpc.Create(c.UserContext(), u)
 	if err != nil {
 		return err

@@ -43,11 +43,15 @@ func (h *handler) Get(c *fiber.Ctx) error {
 }
 
 func (h *handler) Add(c *fiber.Ctx) error {
-	u := new(AppointmentAddProto)
+	u := new(AppointmentProto)
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
-	data_result, err := h.iappointmentsvc.Add(c.UserContext(), u)
+	u.UserCreate = c.UserContext().Value(ifiber.USERID).(string)
+	data_req := AppointmentAddProto{
+		Addappointment: u,
+	}
+	data_result, err := h.iappointmentsvc.Add(c.UserContext(), &data_req)
 	if err != nil {
 		return err
 	}
@@ -60,13 +64,18 @@ func (h *handler) Update(c *fiber.Ctx) error {
 	if appointment_no == "" || healthcare_id == "" {
 		return errors.New("missing parameter appointment_no or healthcare_id")
 	}
-	u := new(AppointmentUpdateProto)
+	u := new(AppointmentProto)
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
-	u.Updateappointment.AppointmentNo = appointment_no
-	u.Updateappointment.HealthcareId = healthcare_id
-	data_result, err := h.iappointmentsvc.Update(c.UserContext(), u)
+	u.AppointmentNo = appointment_no
+	u.HealthcareId = healthcare_id
+
+	u.UserCreate = c.UserContext().Value(ifiber.USERID).(string)
+	data_req := AppointmentUpdateProto{
+		Updateappointment: u,
+	}
+	data_result, err := h.iappointmentsvc.Update(c.UserContext(), &data_req)
 	if err != nil {
 		return err
 	}

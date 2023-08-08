@@ -20,6 +20,8 @@ func (h *handler) CreateParamedics(c *fiber.Ctx) error {
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
+
+	u.Usercreate = c.UserContext().Value(ifiber.USERID).(string)
 	dataCreated, err := h.igrcp.CreateParamedic(c.UserContext(), u)
 	if err != nil {
 		return err

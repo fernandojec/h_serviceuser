@@ -1,13 +1,14 @@
 syntax = "proto3";
 
 package appointment;
-option go_package = "./domains/appointment";
+option go_package = "./domain/appointment";
 
 import "google/protobuf/timestamp.proto";
 
-// #region Appointment Proto
+// #region Appointment Message Proto
 
-message Appointment {
+// default [Get]
+message AppointmentProto {
     string healthcare_id = 1;
     string appointment_no = 2;
     string paramedic_id = 3;
@@ -20,12 +21,47 @@ message Appointment {
     int64 schedule_slot_id = 10;
 }
 
-// #endregion end of Appointment Proto
-
-// #region Message
-
-message AppointmentList {
-    repeated Appointment list = 1;
+// list
+message AppointmentListProto {
+    repeated AppointmentProto appointments = 1;
 }
 
-// #endregion end of Message
+// get
+message AppointmentGetProto {
+    string healthcare_id = 1;
+    string appointment_no = 2;
+}
+
+// add
+message AppointmentAddProto {
+    AppointmentProto addappointment = 1;
+}
+
+// update
+message AppointmentUpdateProto {
+    AppointmentProto updateappointment = 1;
+}
+
+// delete
+message AppointmentDeleteProto {
+    AppointmentProto deleteappointment = 1;
+}
+
+message AppointmentDeleteResponseProto {
+    string healthcare_id = 1;
+    string appointment_no = 2;
+}
+
+// #endregion end of Appointment Proto
+
+// #region Services
+
+service AppointmentService {
+    rpc List(AppointmentProto) returns (AppointmentListProto) {}
+    rpc Get(AppointmentGetProto) returns (AppointmentProto) {}    
+    rpc Add(AppointmentAddProto) returns (AppointmentProto) {}    
+    rpc Update(AppointmentUpdateProto) returns (AppointmentProto) {}    
+    rpc Delete(AppointmentDeleteProto) returns (AppointmentDeleteResponseProto) {}    
+}
+
+// #endregion end of Services

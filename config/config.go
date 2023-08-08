@@ -12,6 +12,7 @@ type Config struct {
 	App      app
 	Jwt      jwt
 	Redis    redisConfig
+	GrpcHost grcpHost
 }
 
 type postgres struct {
@@ -37,6 +38,14 @@ type redisConfig struct {
 	Host     string `env:"REDIS_HOST"`
 	Port     string `env:"REDIS_PORT"`
 	Password string `env:"REDIS_PASSWORD"`
+}
+
+type grcpHost struct {
+	ServiceParamedic   string `env:"SERVICE_PARAMEDIC"`
+	ServicePatient     string `env:"SERVICE_PATIENT"`
+	ServiceHealthcare  string `env:"SERVICE_HEALTHCARE"`
+	ServiceAppointment string `env:"SERVICE_APPOINTMENT"`
+	ServiceSchedule    string `env:"SERVICE_SCHEDULE"`
 }
 
 func LoadConfig() (cfg Config, err error) {

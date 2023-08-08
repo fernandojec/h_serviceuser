@@ -1,4 +1,4 @@
-package paramedics
+package schedules
 
 import (
 	context "context"
@@ -16,20 +16,23 @@ import (
 )
 
 func RouterInit(c fiber.Router, dbx *sqlx.DB, redisc *redis.Client) {
-	port := config.AppConfig.GrpcHost.ServiceParamedic
+	port := config.AppConfig.GrpcHost.ServiceSchedule
 	conn, err := grpc.Dial(port, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		ctx := context.Background()
 
 		ctx = context.WithValue(ctx, loghelper.XTRACEID, fmt.Sprintf("%v", uuid.New()))
-		loghelper.Errorf(ctx, "Error Connect To GRPC Server Paramedics: %v", port)
+		loghelper.Errorf(ctx, "Error Connect To GRPC Server Schedules: %v", port)
 	}
-	service := NewParamedicClient(conn)
+	service := NewScheduleClient(conn)
 	handler := NewHandler(service)
 
-	route := c.Group("paramedics")
+	route := c.Group("schedules")
 
 	route.Use(ifiber.ValidateJWT(dbx, redisc))
-	route.Post("/", handler.CreateParamedics)
-	route.Get("/FindByHospital/:hospital", handler.FindByHospital)
+	route.Post("/", handler.CreateSchedule)
+	route.Get("/FindScheduleAll", handler.FindScheduleAll)
+	route.Get("/FindScheduleAvailable", handler.FindScheduleAvailable)
+	route.Get("/FindScheduleBooked", handler.FindScheduleBooked)
+	route.Put("/:schedule_id", handler.BookSlot)
 }

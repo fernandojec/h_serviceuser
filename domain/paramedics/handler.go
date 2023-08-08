@@ -1,6 +1,9 @@
 package paramedics
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/fernandojec/h_serviceuser/infra/ifiber"
+	"github.com/gofiber/fiber/v2"
+)
 
 type handler struct {
 	igrcp ParamedicClient
@@ -17,11 +20,11 @@ func (h *handler) CreateParamedics(c *fiber.Ctx) error {
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
-	_, err := h.igrcp.CreateParamedic(c.UserContext(), u)
+	dataCreated, err := h.igrcp.CreateParamedic(c.UserContext(), u)
 	if err != nil {
 		return err
 	}
-	return c.SendStatus(fiber.StatusCreated)
+	return ifiber.SuccessResponse(c, fiber.StatusCreated, &dataCreated)
 }
 func (h *handler) FindByHospital(c *fiber.Ctx) error {
 	hospital := c.Params("hospital")
@@ -33,10 +36,11 @@ func (h *handler) FindByHospital(c *fiber.Ctx) error {
 		Hospitalid: hospital,
 	}
 
-	_, err := h.igrcp.FindByHospital(c.UserContext(), &u)
+	dataParamedic, err := h.igrcp.FindByHospital(c.UserContext(), &u)
+
 	if err != nil {
 		return err
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	return ifiber.SuccessResponse(c, fiber.StatusOK, &dataParamedic)
 }

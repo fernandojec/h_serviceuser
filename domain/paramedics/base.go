@@ -4,6 +4,7 @@ import (
 	context "context"
 	"fmt"
 
+	"github.com/fernandojec/h_serviceuser/infra/ifiber"
 	"github.com/fernandojec/h_serviceuser/pkg/loghelper"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -27,7 +28,7 @@ func RouterInit(c fiber.Router, dbx *sqlx.DB, redisc *redis.Client) {
 
 	route := c.Group("paramedics")
 
-	// route.Use(ifiber.ValidateJWT(dbx, redisc))
+	route.Use(ifiber.ValidateJWT(dbx, redisc))
 	route.Post("/", handler.CreateParamedics)
 	route.Get("/FindByHospital/:hospital", handler.FindByHospital)
 }

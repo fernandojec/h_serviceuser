@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package appointment;
+option go_package = "./domains/appointment";
+
+import "google/protobuf/timestamp.proto";
+
+// #region Appointment Proto
+
+message Appointment {
+    string healthcare_id = 1;
+    string appointment_no = 2;
+    string paramedic_id = 3;
+    string patient_id = 4;
+    google.protobuf.Timestamp appointment_date = 5;
+    google.protobuf.Timestamp appointment_time = 6;
+    bool is_void = 7;
+    string user_create = 8;
+    google.protobuf.Timestamp create_at = 9;
+    int64 schedule_slot_id = 10;
+}
+
+// #endregion end of Appointment Proto
+
+// #region Message
+
+message AppointmentList {
+    repeated Appointment list = 1;
+}
+
+// #endregion end of Message

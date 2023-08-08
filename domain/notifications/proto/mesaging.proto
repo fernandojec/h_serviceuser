@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package communication;
+option go_package ="./domain/notifications";
+
+service MessagingService {
+  rpc SendEmail(EmailRequest) returns (EmailResponse);
+  rpc SendWhatsApp(WhatsAppRequest) returns (WhatsAppResponse);
+}
+
+message EmailRequest {
+  string from = 1;
+  repeated string to = 2;
+  repeated string cc = 3;
+  repeated string bcc = 4;
+  string subject = 5;
+  string body = 6;
+  repeated Attachment attachments = 7;
+}
+
+message Attachment {
+  string name = 1;
+  bytes content = 2;
+}
+
+message EmailResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message WhatsAppRequest {
+  string to = 1;
+  string message = 2;
+}
+
+message WhatsAppResponse {
+  bool success = 1;
+  string message = 2;
+}

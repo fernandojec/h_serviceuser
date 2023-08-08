@@ -1,0 +1,28 @@
+// generate file
+// protoc --go_out=. ./domain/patient/*.proto --go-grpc_out=.
+
+syntax="proto3";
+
+package patient;
+option go_package="./domain/patient";
+
+message PatientProto {
+    string first_name = 1;
+    string last_name = 2;
+    string date_of_birth = 3;
+    string address = 4;
+    string email = 5;
+    string phone_number = 6;
+    string user_create = 7;
+}
+
+message PatientListProto {
+    repeated PatientProto list = 1;
+}
+
+import "google/protobuf/Empty.proto";
+
+service PatientProtoService {
+    rpc Create (PatientProto) returns (google.protobuf.Empty);
+    rpc List (google.protobuf.Empty) returns (PatientListProto);
+}

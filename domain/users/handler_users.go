@@ -5,6 +5,7 @@ import (
 
 	"github.com/fernandojec/h_serviceuser/config"
 
+	customvalidator "github.com/fernandojec/h_serviceuser/pkg/customValidator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,6 +30,12 @@ func (h *handlerusers) saveRegistrasi(c *fiber.Ctx) error {
 	req := new(tableUsersModel)
 	if err := c.BodyParser(req); err != nil {
 		return err
+	}
+
+	validate := customvalidator.NewCustomValidator()
+	errors := validate.Validate(req)
+	if errors != nil {
+		return errors
 	}
 
 	// if err := ValidateStruct(req); err != nil {

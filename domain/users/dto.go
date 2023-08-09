@@ -41,7 +41,7 @@ type authCreateRequest struct {
 }
 
 type tableUsersModel struct {
-	UserID    string `json:"user_id" validate:"required,email"`
+	UserID    string `json:"user_id" validate:"required"`
 	FirstName string `json:"first_name" validate:"required"`
 	LastName  string `json:"last_name" validate:"required"`
 	Password  string `json:"password" validate:"required"`

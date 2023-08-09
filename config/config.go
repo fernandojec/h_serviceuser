@@ -1,6 +1,8 @@
 package config
 
 import (
+	"context"
+
 	"github.com/caarlos0/env/v9"
 	"github.com/joho/godotenv"
 )
@@ -26,6 +28,7 @@ type postgres struct {
 type app struct {
 	BaseUrl  string `env:"BASE_URL"`
 	BasePort string `env:"BASE_PORT"`
+	Ctx      context.Context
 }
 
 type jwt struct {

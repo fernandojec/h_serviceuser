@@ -3,7 +3,6 @@ package ifiber
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/fernandojec/h_serviceuser/config"
@@ -53,13 +52,12 @@ func ValidateJWT(dbx *sqlx.DB, redisc *redis.Client) fiber.Handler {
 		}
 
 		go func() {
-			redisc.Expire(c.Context(), fmt.Sprintf("%s-token-%s", "H8", claims.ID),
-				time.Duration(60*config.AppConfig.Jwt.AutoLogoffMinutes))
+			redisc.Expire(config.AppConfig.App.Ctx, fmt.Sprintf("%s-token-%s", "H8", claims.ID),
+				time.Minute*time.Duration(config.AppConfig.Jwt.AutoLogoffMinutes))
 		}()
-		id, _ := strconv.ParseUint(claims.ID, 10, 64)
-		c.Locals("UserID", uint(id))
+		c.Locals("UserID", claims.ID)
 		ctx := c.UserContext()
-		ctx = context.WithValue(ctx, USERID, id)
+		ctx = context.WithValue(ctx, USERID, claims.ID)
 		c.SetUserContext(ctx)
 		return c.Next()
 	}

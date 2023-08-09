@@ -7,6 +7,7 @@ import (
 	"github.com/fernandojec/h_serviceuser/config"
 	"github.com/fernandojec/h_serviceuser/domain/appointment"
 	"github.com/fernandojec/h_serviceuser/domain/auths"
+	"github.com/fernandojec/h_serviceuser/domain/hospital"
 	"github.com/fernandojec/h_serviceuser/domain/paramedics"
 	"github.com/fernandojec/h_serviceuser/domain/patient"
 	"github.com/fernandojec/h_serviceuser/domain/schedules"
@@ -27,10 +28,13 @@ func main() {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, loghelper.XTRACEID, fmt.Sprintf("Init%v", uuid.New()))
 	cfg, err := config.LoadConfig()
+	cfg.App.Ctx = ctx
 	config.AppConfig = cfg
+
 	if err != nil {
 		panic("Cannot Load Config")
 	}
+
 	dbx, err := dbconnect.ConnectSqlx(dbconnect.DBConfig{
 		Host:       cfg.Postgres.Host,
 		Port:       cfg.Postgres.Port,
@@ -64,6 +68,7 @@ func main() {
 	patient.RouterInit(v1, dbx, redisClient)
 	appointment.RouterInit(v1, dbx, redisClient)
 	schedules.RouterInit(v1, dbx, redisClient)
+	hospital.RouterInit(v1, dbx, redisClient)
 
 	app.Listen(cfg.App.BasePort)
 }

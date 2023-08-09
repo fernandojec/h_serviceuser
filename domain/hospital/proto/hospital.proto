@@ -1,0 +1,52 @@
+//  Defines the syntax for the protocol buffer code
+syntax = "proto3";
+
+//  Declares the package in use. This prevents naming conflict between different projects
+package hospital;
+
+//  This option defines the import path of the package that will contain all the generated code for this file.
+option go_package = "./domain/hospital";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/Empty.proto";
+
+
+// #region Hospital Message Proto
+
+//  [Response] Get hospital list
+message HospitalListProto {
+    repeated HospitalProto hospitals = 1;
+}
+
+// [Respon] Get Hospital 
+message HospitalProto {
+    string healthcare_id = 1;
+    string healthcare_name = 2;
+    bool is_active = 3;
+    string user_create = 4;
+    google.protobuf.Timestamp create_at = 5;
+
+
+}
+
+// Get Hospital based on Healthcare ID 
+message HospitalGetProto {
+    string healthcare_id = 1;
+}
+
+// Add hospital
+message HospitalAddProto {
+    HospitalProto addhospital= 1;
+}
+
+
+// #endregion end of Hospital Message Proto
+
+// #region Hospital Service
+
+service HospitalService {
+    rpc List(google.protobuf.Empty) returns (HospitalListProto) {}
+    rpc Get(HospitalGetProto) returns (HospitalProto) {}    
+    rpc Add(HospitalAddProto) returns (HospitalProto) {}     
+}
+
+// #endregion end of Hospital Service

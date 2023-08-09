@@ -3,6 +3,7 @@ package patient
 import (
 	"github.com/fernandojec/h_serviceuser/infra/ifiber"
 	"github.com/gofiber/fiber/v2"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type handler struct {
@@ -39,7 +40,7 @@ func (h *handler) Find(c *fiber.Ctx) error {
 }
 
 func (h *handler) List(c *fiber.Ctx) error {
-	data_result, err := h.ipatientgrpc.List(c.UserContext(), nil, nil)
+	data_result, err := h.ipatientgrpc.List(c.UserContext(), &emptypb.Empty{})
 	if err != nil {
 		return err
 	}

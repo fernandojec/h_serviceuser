@@ -16,12 +16,13 @@ func NewHandler(ischedulegrpc ScheduleClient) *handler {
 }
 
 func (h *handler) CreateSchedule(c *fiber.Ctx) error {
-	u := new(ScheduleCreateProto)
-	if err := c.BodyParser(u); err != nil {
+	dataBody := new(RequestAdd)
+	if err := c.BodyParser(dataBody); err != nil {
 		return err
 	}
+	u := dataBody.ConvertToScheduleCreateProto()
 	u.Usercreate = c.UserContext().Value(ifiber.USERID).(string)
-	dataResult, err := h.ischedulegrpc.CreateSchedule(c.UserContext(), u)
+	dataResult, err := h.ischedulegrpc.CreateSchedule(c.UserContext(), &u)
 	if err != nil {
 		return err
 	}
@@ -29,11 +30,12 @@ func (h *handler) CreateSchedule(c *fiber.Ctx) error {
 }
 
 func (h *handler) FindScheduleAll(c *fiber.Ctx) error {
-	u := new(FindScheduleProto)
-	if err := c.BodyParser(u); err != nil {
+	dataBody := new(RequestFindSchedule)
+	if err := c.BodyParser(dataBody); err != nil {
 		return err
 	}
-	dataResult, err := h.ischedulegrpc.FindScheduleAll(c.UserContext(), u)
+	u := dataBody.ConvertToScheduleFindProto()
+	dataResult, err := h.ischedulegrpc.FindScheduleAll(c.UserContext(), &u)
 	if err != nil {
 		return err
 	}
@@ -41,11 +43,12 @@ func (h *handler) FindScheduleAll(c *fiber.Ctx) error {
 }
 
 func (h *handler) FindScheduleAvailable(c *fiber.Ctx) error {
-	u := new(FindScheduleProto)
-	if err := c.BodyParser(u); err != nil {
+	dataBody := new(RequestFindSchedule)
+	if err := c.BodyParser(dataBody); err != nil {
 		return err
 	}
-	dataResult, err := h.ischedulegrpc.FindScheduleAvailable(c.UserContext(), u)
+	u := dataBody.ConvertToScheduleFindProto()
+	dataResult, err := h.ischedulegrpc.FindScheduleAvailable(c.UserContext(), &u)
 	if err != nil {
 		return err
 	}
@@ -53,11 +56,12 @@ func (h *handler) FindScheduleAvailable(c *fiber.Ctx) error {
 }
 
 func (h *handler) FindScheduleBooked(c *fiber.Ctx) error {
-	u := new(FindScheduleProto)
-	if err := c.BodyParser(u); err != nil {
+	dataBody := new(RequestFindSchedule)
+	if err := c.BodyParser(dataBody); err != nil {
 		return err
 	}
-	dataResult, err := h.ischedulegrpc.FindScheduleBooked(c.UserContext(), u)
+	u := dataBody.ConvertToScheduleFindProto()
+	dataResult, err := h.ischedulegrpc.FindScheduleBooked(c.UserContext(), &u)
 	if err != nil {
 		return err
 	}

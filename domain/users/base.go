@@ -13,16 +13,16 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func RouterInit(c fiber.Router, dbx *sqlx.DB) {
-	repo := NewRepo(dbx)
-	svc := NewService(repo)
-	handler := NewHandler(svc)
+// func RouterInit(c fiber.Router, dbx *sqlx.DB) {
+// 	repo := NewRepo(dbx)
+// 	svc := NewService(repo)
+// 	handler := NewHandler(svc)
 
-	authApi := c.Group("/auth")
-	authApi.Post("/sign-up", handler.CreateAuth)
-	authApi.Get("/verify-email/:token", handler.ActivateAuth)
-	authApi.Post("/sign-in", handler.SignInAuth)
-}
+// 	authApi := c.Group("/auth")
+// 	authApi.Post("/sign-up", handler.CreateAuth)
+// 	authApi.Get("/verify-email/:token", handler.ActivateAuth)
+// 	authApi.Post("/sign-in", handler.SignInAuth)
+// }
 
 func RouterInitUsers(c fiber.Router, dbx *sqlx.DB) {
 	port := ":800"

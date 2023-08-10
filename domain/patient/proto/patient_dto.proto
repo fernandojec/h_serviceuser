@@ -1,7 +1,9 @@
 // generate file
-// protoc --go_out=. ./domain/patient/*.proto --go-grpc_out=.
+// protoc --go_out=. ./domain/patient/proto/*.proto --go-grpc_out=.
 
 syntax="proto3";
+
+import "google/protobuf/Empty.proto";
 
 package patient;
 option go_package="./domain/patient";
@@ -17,17 +19,26 @@ message PatientProto {
 }
 
 message PatientListProto {
-    repeated PatientProto list = 1;
+    repeated PatientResponseProto list = 1;
 }
 
 message PatientFilterProto {
-    string first_name = 1;
-    string last_name = 2;
-    string email = 3;
-    string user_create = 4;
+    string patient_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
 }
 
-import "google/protobuf/Empty.proto";
+message PatientResponseProto {
+    string patient_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string date_of_birth = 4;
+    string address = 5;
+    string email = 6;
+    string phone_number = 7;
+    string user_create = 8;
+}
 
 service PatientProtoService {
     rpc Create (PatientProto) returns (google.protobuf.Empty);

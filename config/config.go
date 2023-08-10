@@ -52,11 +52,11 @@ type grcpHost struct {
 }
 
 func LoadConfig() (cfg Config, err error) {
-	err = godotenv.Load(".env")
+	_ = godotenv.Load(".env")
+	err = env.Parse(&cfg)
 	if err != nil {
 		return
 	}
-	err = env.Parse(&cfg)
 	return
 
 }

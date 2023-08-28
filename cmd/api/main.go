@@ -15,6 +15,7 @@ import (
 	"github.com/fernandojec/h_serviceuser/infra/ifiber"
 	customvalidator "github.com/fernandojec/h_serviceuser/pkg/customValidator"
 	"github.com/fernandojec/h_serviceuser/pkg/dbconnect"
+	fibernewrelicmiddleware "github.com/fernandojec/h_serviceuser/pkg/fiberNewRelicMiddleware"
 	"github.com/fernandojec/h_serviceuser/pkg/loghelper"
 	"github.com/fernandojec/h_serviceuser/pkg/redisconnect"
 	"github.com/gofiber/fiber/v2"
@@ -22,6 +23,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/helmet/v2"
 	"github.com/google/uuid"
+	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
 func main() {
@@ -52,11 +54,24 @@ func main() {
 		loghelper.Fatalf(ctx, "Cannot connect to Redis:%v", err)
 	}
 	// _ = dbx
+	app_newRelic, err := newrelic.NewApplication(
+		newrelic.ConfigAppName("Hacktiv8"),
+		newrelic.ConfigLicense("ef841b4898bbd50ad87db6ec534cdfdbFFFFNRAL"),
+		newrelic.ConfigAppLogForwardingEnabled(true),
+		newrelic.ConfigDistributedTracerEnabled(true),
+		newrelic.ConfigEnabled(true),
+		// newrelic.ConfigDebugLogger(os.Stdout),
+	)
+	cfg_newRelic := fibernewrelicmiddleware.Config{
+		Application: app_newRelic,
+		Enabled:     true,
+	}
 	app := fiber.New(
 		fiber.Config{
 			ErrorHandler: customvalidator.HttpErrorHandler,
 		},
 	)
+	app.Use(fibernewrelicmiddleware.New(cfg_newRelic))
 	app.Use(helmet.New())
 	app.Use(recover.New())
 	app.Use(cors.New())
@@ -69,7 +84,7 @@ func main() {
 	patient.RouterInit(v1, dbx, redisClient)
 	appointment.RouterInit(v1, dbx, redisClient)
 	schedules.RouterInit(v1, dbx, redisClient)
-	hospital.RouterInit(v1, dbx, redisClient)
+	hospital.RouterInit(v1, dbx, redisClient, app_newRelic)
 
 	app.Listen(cfg.App.BasePort)
 }

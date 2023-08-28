@@ -3,18 +3,36 @@ package hospital
 import (
 	"github.com/fernandojec/h_serviceuser/infra/ifiber"
 	"github.com/gofiber/fiber/v2"
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type handler struct {
-	svc HospitalServiceClient
+	svc          HospitalServiceClient
+	app_newRelic *newrelic.Application
 }
 
-func NewHandler(svc HospitalServiceClient) *handler {
-	return &handler{svc: svc}
+func NewHandler(svc HospitalServiceClient, _app_newRelic *newrelic.Application) *handler {
+	return &handler{svc: svc, app_newRelic: _app_newRelic}
 }
 
 func (h *handler) List(c *fiber.Ctx) error {
+
+	// fmt.Printf("%+v", *h.app_newRelic)
+	// txn := h.app_newRelic.StartTransaction("main", nil, nil)
+	// txn := newrelic.FromContext(c.Context())
+	// txn := fibernewrelicmiddleware.Transaction(c.UserContext())
+	// // if txn == nil {
+	// // 	fmt.Println("no transaction")
+	// // }
+	// // txn.SetName("getListHealthcare")
+	// defer txn.End()
+	// ctx := newrelic.NewContext(context.Background(), txn)
+	// if newrelic.FromContext(c.UserContext()) != nil {
+	// 	fmt.Println("context already")
+	// } else {
+	// 	fmt.Println("no context")
+	// }
 	data_ret, err := h.svc.List(c.UserContext(), &emptypb.Empty{})
 	if err != nil {
 		return err

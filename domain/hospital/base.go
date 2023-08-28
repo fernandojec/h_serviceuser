@@ -10,14 +10,21 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/redis/go-redis/v9"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func RouterInit(c fiber.Router, dbx *sqlx.DB, redisc *redis.Client) {
+func RouterInit(c fiber.Router, dbx *sqlx.DB, redisc *redis.Client, appNewRelic *newrelic.Application) {
 	port := config.AppConfig.GrpcHost.ServiceHealthcare
-	conn, err := grpc.Dial(port, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(
+		port,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(nrgrpc.UnaryClientInterceptor),
+		grpc.WithStreamInterceptor(nrgrpc.StreamClientInterceptor),
+	)
 	if err != nil {
 		ctx := context.Background()
 
@@ -25,7 +32,7 @@ func RouterInit(c fiber.Router, dbx *sqlx.DB, redisc *redis.Client) {
 		loghelper.Errorf(ctx, "Error Connect To GRPC Server Hospital: %v", port)
 	}
 	service := NewHospitalServiceClient(conn)
-	handler := NewHandler(service)
+	handler := NewHandler(service, appNewRelic)
 
 	route := c.Group("hospitals")
 

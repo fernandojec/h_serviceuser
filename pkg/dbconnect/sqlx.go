@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	_ "github.com/newrelic/go-agent/v3/integrations/nrpq"
 )
 
 func ConnectSqlx(dbConfig DBConfig) (db *sqlx.DB, err error) {
@@ -17,7 +18,7 @@ func ConnectSqlx(dbConfig DBConfig) (db *sqlx.DB, err error) {
 		dbConfig.Dbname,
 		dbConfig.Sslmode,
 	)
-	db, err = sqlx.Connect("postgres", dsn)
+	db, err = sqlx.Connect("nrpostgres", dsn)
 	if err != nil {
 		return nil, err
 	}

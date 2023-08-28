@@ -26,7 +26,7 @@ func (r *authsRepo) GetAuthByEmail(ctx context.Context, email string) (data *aut
 		return
 	}
 	data = &auths{}
-	err = r.db.Get(data, qs, email)
+	err = r.db.GetContext(ctx, data, qs, email)
 	if err != nil {
 		data = nil
 		loghelper.Errorf(ctx, "Error Get Data From DB :%v", err)

@@ -32,7 +32,8 @@ func main() {
 	config.AppConfig = cfg
 
 	if err != nil {
-		panic("Cannot Load Config")
+		loghelper.Infof(ctx, "Cannot load config: %v", err)
+		// panic("Cannot Load Config")
 	}
 
 	dbx, err := dbconnect.ConnectSqlx(dbconnect.DBConfig{

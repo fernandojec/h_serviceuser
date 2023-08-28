@@ -85,6 +85,8 @@ func main() {
 	appointment.RouterInit(v1, dbx, redisClient)
 	schedules.RouterInit(v1, dbx, redisClient)
 	hospital.RouterInit(v1, dbx, redisClient, app_newRelic)
+	//kkoo
+	fmt.Println("test ricky")
 
 	app.Listen(cfg.App.BasePort)
 }

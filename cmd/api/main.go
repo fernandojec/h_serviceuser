@@ -88,5 +88,7 @@ func main() {
 	//kkoo
 	fmt.Println("test ricky")
 
+	fmt.Println("Starting at http://localhost")
+
 	app.Listen(cfg.App.BasePort)
 }

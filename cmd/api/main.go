@@ -86,5 +86,7 @@ func main() {
 	schedules.RouterInit(v1, dbx, redisClient)
 	hospital.RouterInit(v1, dbx, redisClient, app_newRelic)
 
+	fmt.Println("Starting at http://localhost")
+
 	app.Listen(cfg.App.BasePort)
 }
